@@ -19,13 +19,7 @@ def main():
     print("Students: ", students)
     rating = CalcRating(students).calc()
     print("Ratings: ", rating)
-    found = False
-        for key, value in rating.items():
-            if value > 90:
-                print(key, ' : ', value)
-                found = True
-        if not (found):
-        print("Студентов со средним рейтингом выше 90 баллов нет")
+    
 
 if __name__ == "__main__":
     main()
