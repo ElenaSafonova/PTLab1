@@ -19,7 +19,7 @@ def main():
     print("Students: ", students)
     rating = CalcRating(students).calc()
     print("Ratings: ", rating)
- 
+
 
 if __name__ == "__main__":
     main()
