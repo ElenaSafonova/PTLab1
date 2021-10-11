@@ -1,5 +1,5 @@
 from YAMLDataReader import YAMLDataReader
-from CalcRating import CalcRating
+from CheckAll90Ratings import CheckAll90Ratings
 import argparse
 import sys
 
@@ -17,8 +17,8 @@ def main():
     reader = YAMLDataReader()
     students = reader.read(path)
     print("Students: ", students)
-    rating = CalcRating(students).calc()
-    print("Ratings: ", rating)
+    rating = CheckAll90Ratings(students).calc()
+    print("Ratings All 90: ", rating)
 
 
 if __name__ == "__main__":
