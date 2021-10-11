@@ -254,7 +254,7 @@ if __name__ == "__main__":
 ![test_code90](/reports/test_code90.png)
 #### Pull request ветки yaml
 ![pull_code90](/reports/pull_code90.png)
-### Структура файлов проекта:
+### Network graph:
 ![merge](/reports/merge_code90.png)
 ### Структура файлов проекта:
 ![Директория](/reports/dir.png)
