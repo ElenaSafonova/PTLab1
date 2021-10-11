@@ -117,6 +117,8 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+#### Работа кода ветки yaml
+![pull_yaml](/reports/report.png)
 #### Проверка кода прошла успешно
 ![test_yaml](/reports/test_yaml.png)
 #### Pull request ветки yaml
@@ -250,10 +252,13 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+#### Работа кода ветки code90
+![pull_yaml](/reports/report2.png)
 #### Проверка кода прошла успешно
 ![test_code90](/reports/test_code90.png)
 #### Pull request ветки code90
 ![pull_code90](/reports/pull_code90.png)
+
 ### Network graph:
 ![merge](/reports/merge_code90.png)
 ### Структура файлов проекта:
