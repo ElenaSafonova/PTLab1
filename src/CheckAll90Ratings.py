@@ -23,4 +23,3 @@ class CheckAll90Ratings():
                 self.rating[key] = 90
 
         return self.rating
-        
