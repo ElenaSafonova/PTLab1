@@ -12,42 +12,8 @@
 расположенного в системе Git, с помощью инструмента Travis CI.
 6. Выполнить индивидуальное задание (вариант 9): Определить и вывести на экран студента, имеющего 90 баллов по всем дисциплинам. Если таких студентов несколько, нужно вывести любого из них. Если таких студентов нет, необходимо вывести сообщение об их отсутствии. Формат - YAML.
 # Ход работы
-### Содержание директории
-![Директория](/dir.png)
-### UML-диаграмма программы
-![UML](/UML.png)
-### Файл data/data.yaml
-Содержит информацию о студентах в заданном вариантом формате YAML
-### Расчета задания по варианту 9 осуществляется с помощью кода, представленного в файле src/CheckAll90Ratings.py
-```python
-from typing import Dict
-from Types import DataType
-
-RatingType = Dict[str, float]
-
-
-class CheckAll90Ratings():
-
-    def __init__(self, data: DataType) -> None:
-        self.data: DataType = data
-        self.rating: RatingType = {}
-
-    def calc(self) -> RatingType:
-        for key in self.data:
-            # self.rating[key] = 0.0
-            ratingCount = 0
-            for subject in self.data[key]:
-                if subject[1] == 90:
-                    # print(key + " : "+ str(subject[1]))
-                    ratingCount = ratingCount + 1
-
-            if ratingCount == len(self.data[key]):
-                self.rating[key] = 90
-
-        return self.rating
-
-```
-### Представленный в файле src/YAMLDataReader.py класс реализует чтение данных из простых текстовых файлов формата .yaml
+### Создадим файл формата yaml, класс YAMLDataReader как наследник класса DataReader, тест этого класса и исправим файл main для работы с новым класом. Для этого откроем ветку yaml проекта.
+#### Представленный в файле src/YAMLDataReader.py класс реализует чтение данных из  файлов формата .yaml
 ```python
 from Types import DataType
 from DataReader import DataReader
@@ -79,7 +45,115 @@ class YAMLDataReader(DataReader):
         return self.students
 
 ```
-### Файл test/test_CheckAll90Ratings.py содержит класс для выполнения модульного тестирования методов класса CheckAll90Ratings:
+#### Тестирование класса YAMLDataReader осуществляется с помощью класса, реализованного в файле test/test_YAMLDataReader.py:
+```python
+import pytest
+from typing import Tuple
+from Types import DataType
+from YAMLDataReader import YAMLDataReader
+
+
+class TestYAMLDataReader:
+
+    @pytest.fixture()
+    def file_and_data_content(self) -> Tuple[str, DataType]:
+        text = "---\n" +\
+            "- Иванов Константин Дмитриевич:\n" + \
+            "    математика: 80\n" + \
+            "    химия: 90\n" + \
+            "- Петров Петр Семенович:\n" + \
+            "    русский язык: 87\n" + \
+            "    литература: 78\n"
+
+        data = {
+            "Иванов Константин Дмитриевич": [
+                ("математика", 80), ("химия", 90)
+            ],
+            "Петров Петр Семенович": [
+                ("русский язык", 87), ("литература", 78)
+            ]
+        }
+        return text, data
+
+    @pytest.fixture()
+    def filepath_and_data(self,
+                          file_and_data_content: Tuple[str, DataType],
+                          tmpdir) -> Tuple[str, DataType]:
+        p = tmpdir.mkdir("datadir").join("my_data.yaml")
+        p.write(file_and_data_content[0])
+        return str(p), file_and_data_content[1]
+
+    def test_read(self, filepath_and_data:
+                  Tuple[str, DataType]) -> None:
+        file_content = YAMLDataReader().read(filepath_and_data[0])
+        assert file_content == filepath_and_data[1]
+
+```
+#### main.py:
+```python
+from YAMLDataReader import YAMLDataReader
+from CalcRating import CalcRating
+import argparse
+import sys
+
+
+def get_path_from_arguments(args) -> str:
+    parser = argparse.ArgumentParser(description="Path to datafile")
+    parser.add_argument("-p", dest="path", type=str, required=True,
+                        help="Path to datafile")
+    args = parser.parse_args(args)
+    return args.path
+
+
+def main():
+    path = get_path_from_arguments(sys.argv[1:])
+    reader = YAMLDataReader()
+    students = reader.read(path)
+    print("Students: ", students)
+    rating = CalcRating(students).calc()
+    print("Ratings: ", rating)
+
+
+if __name__ == "__main__":
+    main()
+```
+#### Проверка кода прошла успешно
+![test_yaml](/reports/test_yaml.png)
+#### Pull request ветки yaml
+![pull_yaml](/reports/pull_yaml.png)
+
+### Создадим новую ветку проекта code90 для выполнения задания по варианту 9 (код,тесты, исправление main.py)
+#### Расчета задания по варианту 9 осуществляется с помощью кода, представленного в файле src/CheckAll90Ratings.py
+```python
+from typing import Dict
+from Types import DataType
+
+RatingType = Dict[str, float]
+
+
+class CheckAll90Ratings():
+
+    def __init__(self, data: DataType) -> None:
+        self.data: DataType = data
+        self.rating: RatingType = {}
+
+    def calc(self) -> RatingType:
+        for key in self.data:
+            # self.rating[key] = 0.0
+            ratingCount = 0
+            for subject in self.data[key]:
+                if subject[1] == 90:
+                    # print(key + " : "+ str(subject[1]))
+                    ratingCount = ratingCount + 1
+
+            if ratingCount == len(self.data[key]):
+                self.rating[key] = 90
+
+        return self.rating
+
+```
+
+#### Файл test/test_CheckAll90Ratings.py содержит класс для выполнения модульного тестирования методов класса CheckAll90Ratings:
 ```python
 from typing import Dict, Tuple
 from Types import DataType
@@ -148,50 +222,44 @@ class TestCheckAll90Ratings():
                                  abs=0.001) == rating[student]
 
 ```
-### Тестирование класса YAMLDataReader осуществляется с помощью класса, реализованного в файле test/test_YAMLDataReader.py:
+#### main.py:
 ```python
-import pytest
-from typing import Tuple
-from Types import DataType
 from YAMLDataReader import YAMLDataReader
+from CheckAll90Ratings import CheckAll90Ratings
+import argparse
+import sys
 
 
-class TestYAMLDataReader:
+def get_path_from_arguments(args) -> str:
+    parser = argparse.ArgumentParser(description="Path to datafile")
+    parser.add_argument("-p", dest="path", type=str, required=True,
+                        help="Path to datafile")
+    args = parser.parse_args(args)
+    return args.path
 
-    @pytest.fixture()
-    def file_and_data_content(self) -> Tuple[str, DataType]:
-        text = "---\n" +\
-            "- Иванов Константин Дмитриевич:\n" + \
-            "    математика: 80\n" + \
-            "    химия: 90\n" + \
-            "- Петров Петр Семенович:\n" + \
-            "    русский язык: 87\n" + \
-            "    литература: 78\n"
 
-        data = {
-            "Иванов Константин Дмитриевич": [
-                ("математика", 80), ("химия", 90)
-            ],
-            "Петров Петр Семенович": [
-                ("русский язык", 87), ("литература", 78)
-            ]
-        }
-        return text, data
+def main():
+    path = get_path_from_arguments(sys.argv[1:])
+    reader = YAMLDataReader()
+    students = reader.read(path)
+    print("Students: ", students)
+    rating = CheckAll90Ratings(students).calc()
+    print("Ratings All 90: ", rating)
 
-    @pytest.fixture()
-    def filepath_and_data(self,
-                          file_and_data_content: Tuple[str, DataType],
-                          tmpdir) -> Tuple[str, DataType]:
-        p = tmpdir.mkdir("datadir").join("my_data.yaml")
-        p.write(file_and_data_content[0])
-        return str(p), file_and_data_content[1]
 
-    def test_read(self, filepath_and_data:
-                  Tuple[str, DataType]) -> None:
-        file_content = YAMLDataReader().read(filepath_and_data[0])
-        assert file_content == filepath_and_data[1]
-
+if __name__ == "__main__":
+    main()
 ```
+#### Проверка кода прошла успешно
+![test_code90](/reports/test_code90.png)
+#### Pull request ветки yaml
+![pull_code90](/reports/pull_code90.png)
+### Структура файлов проекта:
+![merge](/reports/merge_code90.png)
+### Структура файлов проекта:
+![Директория](/reports/dir.png)
+### UML-диаграмма:
+![UML](/reports/UML.png)
 # Выводы
 1. Закреплено представление о распределенной системе контроля версий кода Git и ее функциях;
 2. Закреплены понятия «непрерывная интеграция» (CI) и «непрерывное развертывание»
