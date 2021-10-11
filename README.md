@@ -252,7 +252,7 @@ if __name__ == "__main__":
 ```
 #### Проверка кода прошла успешно
 ![test_code90](/reports/test_code90.png)
-#### Pull request ветки yaml
+#### Pull request ветки code90
 ![pull_code90](/reports/pull_code90.png)
 ### Network graph:
 ![merge](/reports/merge_code90.png)
