@@ -209,19 +209,20 @@ class TestCheckAll90Ratings():
                   Tuple[DataType, RatingsType]) -> None:
         rating = CheckAll90Ratings(input_data[0]).calc()
 
-        # первое проверяем что все посчитаные с 90% есть в списке
+        # первое, что проверяем - все ли посчитанные с 90 баллами есть в списке
         for student in rating.keys():
             rating_score = rating[student]
 
             assert pytest.approx(rating_score,
                                  abs=0.001) == input_data[1][student]
 
-        # делаем перекрестную проверку что все кто в списке посчитаны с 90%
+        # делаем перекрестную проверку - у всех, кто в списке, 90 баллов
         for student in input_data[1]:
             rating_score = input_data[1][student]
 
             assert pytest.approx(rating_score,
                                  abs=0.001) == rating[student]
+
 
 ```
 #### main.py:
